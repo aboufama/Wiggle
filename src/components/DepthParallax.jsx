@@ -10,6 +10,7 @@ function ParallaxPlane({
     onAspectRatio,
 }) {
     const meshRef = useRef();
+    // eslint-disable-next-line no-unused-vars
     const { viewport } = useThree();
     const mouseRef = useRef(new THREE.Vector2(0, 0));
 
@@ -20,11 +21,12 @@ function ParallaxPlane({
     useEffect(() => {
         const loader = new THREE.TextureLoader();
         loader.load(colorUrl, (t) => {
-            // Keep texture in sRGB for proper color display
+            // Force SRGB Color Space. Three.js will decode this to Linear when sampling in shader.
             t.colorSpace = THREE.SRGBColorSpace;
             t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping;
             t.minFilter = THREE.LinearFilter;
             t.magFilter = THREE.LinearFilter;
+            t.needsUpdate = true;
             setColorTex(t);
             if (t.image) {
                 const aspect = t.image.width / t.image.height;
@@ -33,6 +35,7 @@ function ParallaxPlane({
             }
         });
         loader.load(depthUrl, (t) => {
+            // Depth map is linear data
             t.colorSpace = THREE.NoColorSpace;
             t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping;
             setDepthTex(t);
@@ -64,10 +67,8 @@ function ParallaxPlane({
         const t = clock.getElapsedTime() * speed * 6;
         const x = Math.sin(t * 0.8) * 0.6;
         const y = Math.sin(t * 0.5) * 0.3;
-
         mouseRef.current.x += (x - mouseRef.current.x) * 0.12;
         mouseRef.current.y += (y - mouseRef.current.y) * 0.12;
-
         uniforms.uMouse.value.set(mouseRef.current.x, mouseRef.current.y);
     });
 
@@ -83,21 +84,10 @@ function ParallaxPlane({
       `,
             fragmentShader: `
         varying vec2 vUv;
-
         uniform sampler2D uColor;
         uniform sampler2D uDepth;
         uniform vec2 uMouse;
         uniform float uStrength;
-
-        // sRGB to Linear conversion
-        vec3 sRGBToLinear(vec3 color) {
-          return pow(color, vec3(2.2));
-        }
-
-        // Linear to sRGB conversion
-        vec3 linearToSRGB(vec3 color) {
-          return pow(color, vec3(1.0 / 2.2));
-        }
 
         void main() {
           float d = texture2D(uDepth, vUv).r;
@@ -108,10 +98,14 @@ function ParallaxPlane({
           
           vec4 col = texture2D(uColor, uv);
           
-          // The texture is already in sRGB, but WebGL reads it as linear
-          // We need to output it properly for sRGB display
-          // Since we set outputColorSpace to sRGB, just pass through
-          gl_FragColor = vec4(col.rgb, 1.0);
+          // MANUAL GAMMA CORRECTION
+          // Three.js ShaderMaterial does not automatically encode output to sRGB
+          // even if outputColorSpace is set to SRGB. We must do it manually.
+          // Because the texture was decoded to linear (from sRGB), we now have linear values.
+          // We convert them back to sRGB for display.
+          
+          vec3 srgb = pow(col.rgb, vec3(1.0 / 2.2));
+          gl_FragColor = vec4(srgb, 1.0);
         }
       `,
         });
@@ -169,11 +163,11 @@ export default function DepthParallax({
                     preserveDrawingBuffer: true,
                 }}
                 onCreated={({ gl }) => {
-                    // Disable all tone mapping and color management that could darken
-                    gl.toneMapping = THREE.NoToneMapping;
+                    // Keep these standard, we handle encoding in shader
                     gl.outputColorSpace = THREE.SRGBColorSpace;
+                    gl.toneMapping = THREE.NoToneMapping;
                 }}
-                flat // Disables tone mapping in R3F
+                flat
             >
                 <ParallaxPlane
                     colorUrl={colorUrl}

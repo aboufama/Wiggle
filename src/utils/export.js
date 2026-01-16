@@ -60,11 +60,32 @@ export async function exportMp4(canvas, duration = 2, fps = 30) {
     const height = canvas.height;
     const totalFrames = Math.floor(duration * fps);
 
+    // Check for supported mime types
+    const mimeTypes = [
+        'video/mp4;codecs=h264',
+        'video/mp4',
+        'video/webm;codecs=h264',
+        'video/webm;codecs=vp9',
+        'video/webm'
+    ];
+
+    let selectedMimeType = '';
+    for (const type of mimeTypes) {
+        if (MediaRecorder.isTypeSupported(type)) {
+            selectedMimeType = type;
+            break;
+        }
+    }
+
+    if (!selectedMimeType) {
+        throw new Error('No supported video mime type found');
+    }
+
     // Simple fallback: use canvas.captureStream and MediaRecorder
     const stream = canvas.captureStream(fps);
     const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: 'video/webm;codecs=vp9',
-        videoBitsPerSecond: 5000000,
+        mimeType: selectedMimeType,
+        videoBitsPerSecond: 8000000, // Higher bitrate for better quality
     });
 
     const chunks = [];
@@ -77,11 +98,12 @@ export async function exportMp4(canvas, duration = 2, fps = 30) {
         };
 
         mediaRecorder.onstop = () => {
-            const blob = new Blob(chunks, { type: 'video/webm' });
+            const blob = new Blob(chunks, { type: selectedMimeType });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'wiggle.webm';
+            const ext = selectedMimeType.includes('mp4') ? 'mp4' : 'webm';
+            a.download = `wiggle.${ext}`;
             a.click();
             URL.revokeObjectURL(url);
             resolve();
