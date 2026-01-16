@@ -123,8 +123,10 @@ main {
   border: 2px dashed #333;
   border-radius: 20px;
   width: 100%;
-  max-width: 800px;
-  height: 400px;
+  max-width: 500px;
+  /* Match main width */
+  aspect-ratio: 1;
+  /* Force square */
   display: flex;
   align-items: center;
   justify-content: center;
