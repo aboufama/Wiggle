@@ -5,4 +5,8 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   base: '/Wiggle/', // GitHub Pages base path
+  build: {
+    outDir: 'docs',
+    emptyOutDir: true
+  }
 })
