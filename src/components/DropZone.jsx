@@ -86,19 +86,8 @@ const DropZone = forwardRef(function DropZone({ onImageSelect, previewImage }, r
                     <div className="drop-icon">↓</div>
                     {isMobile ? (
                         <div className="mobile-actions">
-                            <label className="mobile-btn-text">
-                                tap to take photo
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    capture="environment"
-                                    onChange={handleFileInput}
-                                    className="hidden-input"
-                                />
-                            </label>
-                            <div className="divider">or</div>
                             <label className="mobile-link">
-                                choose from library
+                                pick image
                                 <input
                                     type="file"
                                     accept="image/*"

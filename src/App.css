@@ -134,6 +134,8 @@ main {
   transition: all 0.3s ease;
   position: relative;
   background: #050505;
+  padding: 32px;
+  /* Added buffer padding */
 }
 
 .drop-zone:hover {
@@ -161,37 +163,22 @@ main {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  justify-content: center;
   width: 100%;
 }
 
-.mobile-btn-text {
-  font-size: 16px;
-  color: #fff;
-  cursor: pointer;
-  padding: 8px 16px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.1);
-  transition: all 0.2s;
-  display: inline-block;
-}
-
-.mobile-btn-text:active {
-  background: rgba(255, 255, 255, 0.2);
-  transform: scale(0.98);
-}
-
 .mobile-link {
-  font-size: 13px;
+  font-size: 14px;
   color: #666;
-  text-decoration: underline;
+  /* Match the desktop hint color */
+  text-decoration: none;
   cursor: pointer;
   padding: 8px;
+  transition: color 0.2s;
 }
 
-.divider {
-  font-size: 12px;
-  color: #444;
+.mobile-link:hover {
+  color: #fff;
 }
 
 .hidden-input {
