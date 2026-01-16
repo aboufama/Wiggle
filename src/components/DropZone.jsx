@@ -83,16 +83,41 @@ const DropZone = forwardRef(function DropZone({ onImageSelect, previewImage }, r
                 </div>
             ) : (
                 <div className="drop-content">
-                    <div className="drop-icon">{isMobile ? '📷' : '↓'}</div>
-                    <p>{isMobile ? 'tap to take photo' : 'drop image here'}</p>
-                    <span className="drop-hint">{isMobile ? 'or choose from library' : 'or click to select'}</span>
-                    <input
-                        type="file"
-                        accept="image/*"
-                        capture={isMobile ? "environment" : undefined}
-                        onChange={handleFileInput}
-                        className="file-input"
-                    />
+                    {isMobile ? (
+                        <div className="mobile-actions">
+                            <label className="mobile-btn camera-btn">
+                                take photo
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    capture="environment"
+                                    onChange={handleFileInput}
+                                    className="hidden-input"
+                                />
+                            </label>
+                            <label className="mobile-btn library-btn">
+                                choose from library
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleFileInput}
+                                    className="hidden-input"
+                                />
+                            </label>
+                        </div>
+                    ) : (
+                        <>
+                            <div className="drop-icon">↓</div>
+                            <p>drop image here</p>
+                            <span className="drop-hint">or click to select</span>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleFileInput}
+                                className="file-input"
+                            />
+                        </>
+                    )}
                 </div>
             )}
         </div>
