@@ -83,10 +83,11 @@ const DropZone = forwardRef(function DropZone({ onImageSelect, previewImage }, r
                 </div>
             ) : (
                 <div className="drop-content">
+                    <div className="drop-icon">↓</div>
                     {isMobile ? (
                         <div className="mobile-actions">
-                            <label className="mobile-btn camera-btn">
-                                take photo
+                            <label className="mobile-btn-text">
+                                tap to take photo
                                 <input
                                     type="file"
                                     accept="image/*"
@@ -95,7 +96,8 @@ const DropZone = forwardRef(function DropZone({ onImageSelect, previewImage }, r
                                     className="hidden-input"
                                 />
                             </label>
-                            <label className="mobile-btn library-btn">
+                            <div className="divider">or</div>
+                            <label className="mobile-link">
                                 choose from library
                                 <input
                                     type="file"
@@ -107,7 +109,6 @@ const DropZone = forwardRef(function DropZone({ onImageSelect, previewImage }, r
                         </div>
                     ) : (
                         <>
-                            <div className="drop-icon">↓</div>
                             <p>drop image here</p>
                             <span className="drop-hint">or click to select</span>
                             <input

@@ -153,21 +153,49 @@ main {
   width: 100%;
 }
 
-.drop-icon {
-  font-size: 3rem;
-  margin-bottom: 0.5rem;
+
+/* Mobile Actions */
+.mobile-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
 }
 
-.drop-content p {
-  font-size: 14px;
-  opacity: 0.6;
-  margin-bottom: 8px;
+.mobile-btn-text {
+  font-size: 16px;
+  color: #fff;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  transition: all 0.2s;
+  display: inline-block;
 }
 
-.drop-hint {
+.mobile-btn-text:active {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(0.98);
+}
+
+.mobile-link {
+  font-size: 13px;
+  color: #666;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.divider {
   font-size: 12px;
-  opacity: 0.3;
+  color: #444;
 }
+
+.hidden-input {
+  display: none;
+}
+
 
 .file-input {
   position: absolute;

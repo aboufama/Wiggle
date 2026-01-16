@@ -97,8 +97,32 @@ export async function exportMp4(canvas, duration = 2, fps = 30) {
             }
         };
 
-        mediaRecorder.onstop = () => {
+        mediaRecorder.onstop = async () => {
             const blob = new Blob(chunks, { type: selectedMimeType });
+            const file = new File([blob], 'wiggle.mp4', { type: selectedMimeType });
+
+            // Try native sharing first (best for iOS "Save to Files/Photos")
+            if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
+                    await navigator.share({
+                        files: [file],
+                        title: 'Wiggle 3D',
+                        text: 'Check out my 3D wiggle!'
+                    });
+                    resolve();
+                    return;
+                } catch (err) {
+                    if (err.name !== 'AbortError') {
+                        console.warn('Share failed, falling back to download', err);
+                    } else {
+                        // User cancelled share, consider it done
+                        resolve();
+                        return;
+                    }
+                }
+            }
+
+            // Fallback to direct download
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
